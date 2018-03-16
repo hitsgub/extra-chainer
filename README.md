@@ -4,7 +4,8 @@ Layer classes implementation for deep learning by Chainer.
 # Requirements
 - [Chainer (test only on ver.4.0.0b3)](https://github.com/pfnet/chainer) (Neural network framework)
 
-# separable_link
+# Usages
+## separable_link
 Wrapper classes for making chainer 'link' separable,
 for example, create channel separable convolution from links.Convolution2D.
 In python script, write:
