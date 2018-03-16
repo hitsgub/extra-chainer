@@ -20,7 +20,7 @@ class MyCnnModel(chainer.Chain):
             ...
             # separable convolution.
             self.sepA = SeparableLink(link=L.Convolution2D, axis=1, n=8)
-            # separable convolution on the axis of sample. It need reduced on test phase.
+            # separable convolution on the axis of sample (axis=0). It need reduced on test phase.
             self.sepB = SeparableSampleLink(link=L.Convolution2D, _reduce=sum, _normalize=True, n=4)
             ...
 
