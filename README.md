@@ -1,8 +1,14 @@
-# chainer-my-links
-Layer classes implementation for deep learning by Chainer.
+# Extra-Chainer
+Useful classes and functions implementation for Chainer, the deep learning framework.
 
 # Requirements
 - [Chainer (test only on ver.4.0.0b3)](https://github.com/pfnet/chainer) (Neural network framework)
+
+# links
+Implementations of chainer.Link
+
+# functions
+Implementations of chainer.Function
 
 # Usages
 ## separable_link
