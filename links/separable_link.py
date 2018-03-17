@@ -2,7 +2,7 @@
 """
 Created on Fri Mar 16 08:00:56 2018
 
-@author: hitstales
+@author: HITS
 """
 
 import six
