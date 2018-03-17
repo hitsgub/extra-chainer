@@ -7,14 +7,14 @@ Useful classes and functions implementation for Chainer, the deep learning frame
 # links
 Implementations of chainer.Link
 - separable_link
-  - Wrapper classes for making chainer 'link' separable,
-    for example, create channel separable convolution from links.Convolution2D.
+  - Wrapper classes for making chainer 'link' separable.
+  - For example, create channel separable convolution from links.Convolution2D.
 
 # functions
 Implementations of chainer.Function
 - exadd
   - Extra addition function for Variables they have mismatch shapes.
-    for example, it is able to used for merging branches with different channels in ResNetA.
+  - For example, it is able to used for merging branches with different channels in ResNetA.
 
 # Usages
 Please look in each directory.
