@@ -3,8 +3,8 @@ Implementations of chainer.Function
 
 # Usages
 ## exadd
-Extra addtion function for Variables they have mismatch shapes.
-For example, it is able to used for merging branches with different channels in ResNetA.
+Extra addtion function for Variables they have mismatch shapes.  
+For example, it is able to used for merging branches with different channels in ResNetA.  
 In python script, write:
 ```
 import chainer
