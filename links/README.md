@@ -3,8 +3,8 @@ Implementations of chainer.Link
 
 # Usages
 ## separable_link
-Wrapper classes for making chainer 'link' separable,
-for example, create channel separable convolution from links.Convolution2D.
+Wrapper classes for making chainer 'link' separable.  
+For example, create channel separable convolution from links.Convolution2D.  
 In python script, write:
 ```
 import chainer
