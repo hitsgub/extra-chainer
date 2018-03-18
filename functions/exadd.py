@@ -62,3 +62,18 @@ def exadd(xs, shape=None):
         ~chainer.Variable: Output variable.
     """
     return ExAdd(shape)(*xs)
+
+def exadd_maxshape(xs):
+    """
+    Add given variables with extra zero padding on mismatch channels,
+    arrange to largest shape.
+    
+    Args:
+        xs (tuple of Variables): Variables to be added.
+   
+    Returns:
+        ~chainer.Variable: Output variable.
+    """
+    shapes = (x.shape for x in xs)
+    shape = [max(ls) for ls in zip(shapes)]
+    return ExAdd(shape)(*xs)
