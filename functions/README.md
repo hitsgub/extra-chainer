@@ -1,4 +1,4 @@
-# links
+# functions
 Implementations of chainer.Function
 
 # Usages
