@@ -45,7 +45,12 @@ Implementations of chainer.Function
     For example, it is able to used for merging branches with different channels in ResNetA.
 
 # models
-Implementations of neural network models by chainer.Link
+Implementations of neural network models by chainer.Link.
+- network_templates
+  - template of neural network models,  
+    for example, ResNet, PyramidNet, DenseNet, DenseNet.
+
+Various examples are available in the directory.
 
 # utils
 Implementations of utility functions.
