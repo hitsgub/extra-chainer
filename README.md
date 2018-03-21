@@ -13,7 +13,8 @@ Implementations of chainer.Link
   - And, you can add keys for your own new methods.
 - network_modules
   - CNN Encoder definer using 'chain_modules.Module'.
-In python script, write:
+
+In python script, write chain_modules and network_modules:
 ```
 from chain_modules import Module
 from network_modules import Encoder
