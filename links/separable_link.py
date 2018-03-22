@@ -6,11 +6,12 @@ Created on Fri Mar 16 08:00:56 2018
 """
 
 import six
-import chainer 
+import chainer
 import chainer.links as L
 import chainer.functions as F
 from chainer import config
 import numpy as np
+
 
 class SeparableLink(chainer.ChainList):
     def __init__(self, link=L.Convolution2D, axis=1, n=2, *args, **kwargs):
@@ -26,8 +27,10 @@ class SeparableLink(chainer.ChainList):
         slices = (slice(i, j) for i, j in zip(divides, divides[1:]))
         slice_base = (slice(None),) * self.axis
         # applying each link on the each divided slice, and concatenation.
-        y = F.concat((f(x[slice_base + (s,)]) for f, s in zip(self, slices)), self.axis)
+        y = F.concat((f(x[slice_base + (s,)]) for f, s in zip(self, slices)),
+                     self.axis)
         return y
+
 
 class SeparableSampleLink(chainer.ChainList):
     def __init__(self, link=L.Convolution2D, _reduce=sum, _normalize=True,
@@ -43,7 +46,7 @@ class SeparableSampleLink(chainer.ChainList):
             # computating dividing point on axis=0.
             divides = np.linspace(0, x.shape[0], len(self) + 1)
             # computating divided slices.
-            slices = (slice(i,j) for i, j in zip(divides, divides[1:]))
+            slices = (slice(i, j) for i, j in zip(divides, divides[1:]))
             # applying each link on the each divided slice, and concatenation.
             y = F.concat((f(x[s]) for f, s in zip(self, slices)), 0)
         else:

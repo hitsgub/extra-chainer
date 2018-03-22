@@ -64,26 +64,35 @@ class LinkDict():
     def merge_dic(self, *dicts):
         return six.moves.reduce(lambda lhs, rhs: dict(lhs, **rhs), dicts)
 
-    def __init__(self, in_channels, out_channels, stride=1, nobias=False,
+    def __init__(self, in_channels, out_channels, keys, stride=1, nobias=False,
                  conv_keys='', **dic):
         self.ch = in_channels
         # If out_channels is None, output keeps input channels.
         self.out_ch = out_channels or in_channels
+        self.keys = keys
         self.stride = stride
         self.nobias = nobias
         self.conv_keys = conv_keys + 'Cci'
         self.dic = self.merge_dic(self.preset(), dic)
 
-    def __call__(self, key):
-        if key in self.conv_keys:
-            # 'out_channels' changes when convolution applying.
-            self.ch = self.out_ch
-        # create the 'link' instance (or 'lambda x' function).
-        link = self.dic[key](self)
-        if key in self.conv_keys:
-            # Assigined 'stride' is applied only on the first convolution.
-            self.stride = 1
-        return link
+    def __iter__(self):
+        factor = 1
+        for k in self.keys:
+            if k.isdigit():
+                factor = int(k)
+                continue
+            if k in self.conv_keys:
+                # 'out_channels' changes when convolution applying.
+                self.ch = self.out_ch * factor
+                # reset factor of channel
+                factor = 1
+            # create the 'link' instance (or 'lambda x' function).
+            link = self.dic[k](self)
+            if k in self.conv_keys:
+                # Assigined 'stride' is applied only on the first convolution.
+                self.stride = 1
+            yield link
+        raise StopIteration()
 
 
 class SeriesLink(chainer.ChainList):
@@ -91,15 +100,14 @@ class SeriesLink(chainer.ChainList):
     def __init__(self, in_channels, out_channels, keys='BRCBRC', stride=1,
                  nobias=False, conv_keys='', **dic):
         super(SeriesLink, self).__init__()
-        dic = LinkDict(in_channels, out_channels, stride, nobias, conv_keys,
-                       **dic)
+        dic = LinkDict(in_channels, out_channels, keys, stride, nobias,
+                       conv_keys, **dic)
         self.series = []
-        for k in keys:
-            self.series.append(dic(k))
-        for c in self.series:
+        for link in dic:
+            self.series.append(link)
             # append only chainer.link.Link to self.
-            if isinstance(c, chainer.link.Link):
-                self.append(c)
+            if isinstance(link, chainer.link.Link):
+                self.append(link)
         self.out_channels = dic.ch
 
     def __call__(self, x):
