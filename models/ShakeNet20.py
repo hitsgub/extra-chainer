@@ -62,9 +62,8 @@ W = lambda _self: L.Convolution2D(None, _self.ch * 2, 3, _self.stride, 1,
 # Twice channels Batch normalization
 b = lambda _self: L.BatchNormalization(_self.ch * 2)
 # Separable convolution
-S = lambda _self: SeparableLink(L.Convolution2D, 1, 2, None,
-                                _self.ch * 2, 3, _self.stride, 1,
-                                nobias, _self.initialW)
+S = lambda _self: SeparableLink(L.Convolution2D, 1, 2, None, _self.ch, 3,
+                                _self.stride, 1, nobias, _self.initialW)
 # shakeshake
 s = lambda _self: ShakeShake()
 
