@@ -25,6 +25,7 @@ class LinkDict():
     "Link dictionary class."
     def preset(self):
         initialW = chainer.initializers.HeNormal()
+        self.initialW = initialW
         dic = {}
         # preset keys (is to be overrided).
         # 3x3 Convolution
