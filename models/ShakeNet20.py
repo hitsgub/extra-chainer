@@ -53,14 +53,10 @@ def shakeshake(x, axes=(0, 1), a_range=(0, 1), b_range=(0, 1)):
 Ns = (3,) * 3
 channels = (16, 32, 64)
 firsts = 'CBR'
-mains = 'I+BRWbRSs'
+mains = 'I+BR2CBRSs'
 lasts = 'BRP'
 nobias = False
-# Twice channels convolution
-W = lambda _self: L.Convolution2D(None, _self.ch * 2, 3, _self.stride, 1,
-                                  nobias, _self.initialW)
-# Twice channels Batch normalization
-b = lambda _self: L.BatchNormalization(_self.ch * 2)
+
 # Separable convolution
 S = lambda _self: SeparableLink(L.Convolution2D, 1, 2, None, _self.ch, 3,
                                 _self.stride, 1, nobias, _self.initialW)
@@ -71,4 +67,4 @@ s = lambda _self: ShakeShake()
 def model(classes):
     "Definition of 20-layer pre-activation ShakeShake ResNets."
     return ResNet(classes, Ns, channels, firsts, mains, lasts, nobias=nobias,
-                  conv_keys='WS', W=W, b=b, S=S, s=s)
+                  conv_keys='S', S=S, s=s)
