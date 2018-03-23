@@ -9,7 +9,7 @@ from models.network_templates import ResNet
 Ns = (3,) * 3
 channels = (16, 32, 64)
 firsts = 'CBR'
-mains = 'I+BR4CBRCBR4C'
+mains = 'I+BRcBRCBR4c'
 lasts = 'BRP'
 nobias = False
 
