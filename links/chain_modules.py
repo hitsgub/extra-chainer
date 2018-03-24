@@ -65,7 +65,7 @@ class LinkDict():
         return six.moves.reduce(lambda lhs, rhs: dict(lhs, **rhs), dicts)
 
     def __init__(self, in_channels, out_channels, keys, stride=1, nobias=False,
-                 conv_keys='', **dic):
+                 conv_keys='', depthrate=0, **dic):
         self.ch = in_channels
         # If out_channels is None, output keeps input channels.
         self.out_ch = out_channels or in_channels
@@ -73,6 +73,7 @@ class LinkDict():
         self.stride = stride
         self.nobias = nobias
         self.conv_keys = conv_keys + 'Cci'
+        self.depth_rate = depthrate
         self.dic = self.merge_dic(self.preset(), dic)
 
     def __iter__(self):
@@ -98,10 +99,10 @@ class LinkDict():
 class SeriesLink(chainer.ChainList):
     "Series of link."
     def __init__(self, in_channels, out_channels, keys='BRCBRC', stride=1,
-                 nobias=False, conv_keys='', **dic):
+                 nobias=False, conv_keys='', depthrate=0, **dic):
         super(SeriesLink, self).__init__()
         dic = LinkDict(in_channels, out_channels, keys, stride, nobias,
-                       conv_keys, **dic)
+                       conv_keys, depthrate, **dic)
         self.series = []
         for link in dic:
             self.series.append(link)
@@ -117,14 +118,14 @@ class SeriesLink(chainer.ChainList):
 class SumSeries(chainer.ChainList):
     "Sum of Series."
     def __init__(self, in_channels, outs_channels, keys='I+BRCBRC', stride=1,
-                 nobias=False, conv_keys='', **dic):
+                 nobias=False, conv_keys='', depthrate=0, **dic):
         super(SumSeries, self).__init__()
         if isinstance(keys, str):
             keys = keys.split('+')
         outs_channels = force_tuple(outs_channels, len(keys))
         for k, o in zip(keys, outs_channels):
             self.append(SeriesLink(in_channels, o, k, stride, nobias,
-                                   conv_keys, **dic))
+                                   conv_keys, depthrate, **dic))
         self.out_channels = max(branch.out_channels for branch in self)
 
     def __call__(self, x):
@@ -134,7 +135,7 @@ class SumSeries(chainer.ChainList):
 class ConcatSeries(chainer.ChainList):
     "Concatenation of Series."
     def __init__(self, in_channels, outs_channels, keys='I,BRCBRC', stride=1,
-                 nobias=False, conv_keys='', **dic):
+                 nobias=False, conv_keys='', depthrate=0, **dic):
         super(ConcatSeries, self).__init__()
         if isinstance(keys, str):
             keys = keys.split(',')
@@ -142,7 +143,7 @@ class ConcatSeries(chainer.ChainList):
         for k, o in zip(keys, outs_channels):
             series = SumSeries if '+' in k else SeriesLink
             self.append(series(in_channels, o, k, stride, nobias, conv_keys,
-                               **dic))
+                               depthrate, **dic))
         self.out_channels = sum(branch.out_channels for branch in self)
 
     def __call__(self, x):
@@ -196,6 +197,7 @@ class Module(SequentialChainList):
         conv_keys (str): The keys corresponds to the layers which includes
             convolution. This information is used to stride invalidation and
             out_channel updating in the first convolution layer.
+        depthrate (float): The depth rate of current module in whole networks.
         print_debug (bool): Whether print or not the series of the module
             information. default is True.
         dic (dict as {char: chainer.link generator}):
@@ -208,14 +210,15 @@ class Module(SequentialChainList):
             in_channels, out_channels, stride, nobias, conv_keys.
     """
     def __init__(self, in_channels, outs_channels, keys='I+CBRCB>R', stride=1,
-                 nobias=False, conv_keys='', print_debug=True, **dic):
+                 nobias=False, conv_keys='', depthrate=0,
+                 print_debug=True, **dic):
         super(Module, self).__init__()
         if isinstance(keys, str):
             keys = keys.split('>')
         outs_channels = force_tuple(outs_channels, len(keys))
         for k, o in zip(keys, outs_channels):
             if print_debug:
-                print(in_channels, k, o)
+                print('{:.4f}'.format(depthrate), in_channels, k, o)
             if ',' in k:
                 series = ConcatSeries
             elif '+' in k:
@@ -223,7 +226,7 @@ class Module(SequentialChainList):
             else:
                 series = SeriesLink
             self.append(series(in_channels, o, k, stride, nobias, conv_keys,
-                               **dic))
+                               depthrate, **dic))
             stride = 1
             in_channels = self[-1].out_channels
         self.out_channels = in_channels

@@ -11,6 +11,7 @@ from chainer import cuda
 import chainer.links as L
 from models.network_templates import ResNet
 from links.separable_link import SeparableLink
+from utils.utils import attention_shape
 
 
 class ShakeShake(function.Function):
@@ -27,8 +28,7 @@ class ShakeShake(function.Function):
         self.retain_inputs(())
         half = x.shape[1] // 2
         if config.train:
-            self.shape = [s if i in self.axes else 1 for i, s in
-                          enumerate(x.shape)]
+            self.shape = attention_shape(self.axes, x.shape)
             if 1 in self.axes:
                 self.shape[1] //= 2
             a = xp.random.uniform(*self.a_range, self.shape).astype(xp.float32)

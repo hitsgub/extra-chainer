@@ -9,6 +9,21 @@ import six
 from links.chain_modules import Module, SequentialChainList
 
 
+class DepthRate(object):
+    "get current depth rate in whole networks."
+    def __init__(self, total, _range=(0, 1)):
+        self.begin, end = _range
+        self.sub = float(end - self.begin)
+        self.total = total
+        self.offset = 0
+
+    def __call__(self, depth=0):
+        return self.sub * (depth + self.offset) / self.total + self.begin
+
+    def add_offset(self, pos):
+        self.offset += pos
+
+
 def force_tuple(src, n):
     if not hasattr(src, '__iter__'):
         src = (src,) * n
@@ -77,14 +92,15 @@ class DynamicRatioChannels(RuleChannels):
 class Block(SequentialChainList):
     "N iteration of Module."
     def __init__(self, N, in_channels, rule_channels, keys='I+BRCBRC',
-                 stride=1, nobias=False, conv_keys='', **dic):
+                 stride=1, nobias=False, conv_keys='',
+                 dr=DepthRate(1), **dic):
         super(Block, self).__init__()
         if not isinstance(rule_channels, RuleChannels):
             rule_channels = StaticChannels(rule_channels)
-        for _ in six.moves.range(N):
+        for i in six.moves.range(N):
             out_channels = rule_channels(in_channels)
             self.append(Module(in_channels, out_channels, keys, stride, nobias,
-                               conv_keys, **dic))
+                               conv_keys, dr(i), **dic))
             stride = 1
             in_channels = self[-1].out_channels
         self.out_channels = in_channels
@@ -99,13 +115,15 @@ class Encoder(SequentialChainList):
         rules_channels = force_tuple(rules_channels, len(Ns))
         if not isinstance(rule_channels_join, RuleChannels):
             rule_channels_join = StaticChannels(rule_channels_join)
+        dr = DepthRate(sum(Ns))
         for N, rule, stride in zip(Ns, rules_channels, strides):
             if len(self) > 0:
                 out_channels = rule_channels_join(in_channels)
                 self.append(Module(in_channels, out_channels, keys_join, 1,
-                                   nobias, conv_keys, **dic))
+                                   nobias, conv_keys, dr(0), **dic))
                 in_channels = self[-1].out_channels
             self.append(Block(N, in_channels, rule, keys, stride, nobias,
-                              conv_keys, **dic))
+                              conv_keys, dr, **dic))
             in_channels = self[-1].out_channels
+            dr.add_offset(N)
         self.out_channels = in_channels
