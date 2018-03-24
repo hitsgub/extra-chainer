@@ -57,6 +57,9 @@ Implementations of utility functions.
 - model_info
   - Getter of string of model informations.  
     For example, number of links, number of weights, number of parameters.
+- utils.attention_shape(axes, shape)
+  - get modified shape, remain length of axis in axes, reduce to '1' length of axis not in axes.  
+    For example, utils.attention((1, 2), (10, 20, 30, 40)) -> (1, 20, 30, 1).
 
 # Usages
 Please look in each directory.
