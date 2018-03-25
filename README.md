@@ -8,9 +8,10 @@ Useful classes and functions implementation for Chainer, the deep learning frame
 Implementations of chainer.Link
 - chain_modules
   - CNN module definer by array of keys such as 'I+CBRCB>R',  
-    where I=identity-mapping, B=BN, R=ReLU, C=Conv, etc...,  
-    '+'=additional join, ','=concatenation join, '>'=sequential join.
-  - And, you can add keys for your own new methods.
+    where I=identity-mapping, B=BN, R=ReLU, C=Conv3x3, c=Conv1x1, etc...,  
+    '+'=additional join, ','=concatenation join, '>'=sequential join,
+    and 'integer' for example 2 or 4, denotes channel scaling factor.
+　- And, you can add keys for your own new methods.
 - network_modules
   - CNN Encoder definer using 'chain_modules.Module'.
 
@@ -27,6 +28,8 @@ class MyCnnModel(chainer.Chain):
             self.res = Module(16, 32, 'I+CBRCB>R')
             # PreActResNet module definition
             self.pres = Module(16, 32, 'I+BRCBRC')
+            # PreActResNet (bottleneck) module definition
+            self.bres = Module(16, 32, 'I+BRcBRcBR4c'
             # DenseNet module definition
             self.dense = Module(16, 12, 'I,BRC')
             # Encoder part of ResNet20 definition
