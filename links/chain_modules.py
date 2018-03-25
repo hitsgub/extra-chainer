@@ -78,6 +78,7 @@ class LinkDict():
 
     def __iter__(self):
         factor = 1
+        self.channels = []
         for k in self.keys:
             if k.isdigit():
                 factor = int(k)
@@ -85,6 +86,7 @@ class LinkDict():
             if k in self.conv_keys:
                 # 'out_channels' changes when convolution applying.
                 self.ch = self.out_ch * factor
+                self.channels.append(self.ch)
                 # reset factor of channel
                 factor = 1
             # create the 'link' instance (or 'lambda x' function).
@@ -110,6 +112,7 @@ class SeriesLink(chainer.ChainList):
             if isinstance(link, chainer.link.Link):
                 self.append(link)
         self.out_channels = dic.ch
+        self.channels = dic.channels
 
     def __call__(self, x):
         return six.moves.reduce(lambda h, f: f(h), self.series, x)
@@ -127,6 +130,7 @@ class SumSeries(chainer.ChainList):
             self.append(SeriesLink(in_channels, o, k, stride, nobias,
                                    conv_keys, depthrate, **dic))
         self.out_channels = max(branch.out_channels for branch in self)
+        self.channels = [branch.channels for branch in self]
 
     def __call__(self, x):
         return exadd_maxshape([f(x) for f in self])
@@ -145,6 +149,7 @@ class ConcatSeries(chainer.ChainList):
             self.append(series(in_channels, o, k, stride, nobias, conv_keys,
                                depthrate, **dic))
         self.out_channels = sum(branch.out_channels for branch in self)
+        self.channels = [branch.channels for branch in self]
 
     def __call__(self, x):
         return F.concat([f(x) for f in self])
@@ -217,8 +222,6 @@ class Module(SequentialChainList):
             keys = keys.split('>')
         outs_channels = force_tuple(outs_channels, len(keys))
         for k, o in zip(keys, outs_channels):
-            if print_debug:
-                print('{:.4f}'.format(depthrate), in_channels, k, o)
             if ',' in k:
                 series = ConcatSeries
             elif '+' in k:
@@ -230,3 +233,6 @@ class Module(SequentialChainList):
             stride = 1
             in_channels = self[-1].out_channels
         self.out_channels = in_channels
+        self.channels = [branch.channels for branch in self]
+        if print_debug:
+            print('{:.4f}'.format(depthrate), keys, self.channels)
