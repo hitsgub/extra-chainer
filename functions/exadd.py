@@ -4,7 +4,7 @@ Created on Sat Mar 17 08:07:14 2018
 
 @author: HITS
 """
-import chainer
+from chainer.backends import cuda
 from chainer import function
 
 
@@ -22,7 +22,7 @@ class ExAdd(function.Function):
         self._shape = shape
 
     def forward(self, xs):
-        xp = chainer.cuda.get_array_module(xs[0])
+        xp = cuda.get_array_module(xs[0])
         self.retain_inputs(())
         self.shapes = (x.shape for x in xs)
         y = xp.zeros(self._shape, dtype=xs[0].dtype) if self._shape else 0
@@ -45,7 +45,7 @@ class ExAdd(function.Function):
                 slices = [slice(lx) for lx in xshape]
                 gx = gy[slices]
             else:
-                xp = chainer.cuda.get_array_module(gy)
+                xp = cuda.get_array_module(gy)
                 gx = xp.zeros(xshape, dtype=gy.dtype)
                 # Compute intersection between shape of x and y.
                 slices = [slice(min(lx, ly)) for lx, ly in
