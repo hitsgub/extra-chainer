@@ -26,3 +26,22 @@ class MyCnnModel(chainer.Chain):
         ...
         return x
 ```
+## shake_drop
+[shake-drop](https://arxiv.org/abs/1802.02375) implementation as chainer function.  
+In python script, write:
+```
+import chainer
+from shake_drop import ShakeDrop
+
+class MyCnnModel(chainer.Chain):
+    def __init__(self):
+        super(MyCnnModel, self).__init__()
+        with self.init_scope()
+            ...
+
+    def __call__(self, x):
+        ...
+        p = ShakeDrop(x) # shake-drop, on the pixel-level, and depthwise stochastistic (probability 0.5 on the last layer).
+        ...
+        return x
+```
