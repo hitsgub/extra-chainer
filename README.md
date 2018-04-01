@@ -3,6 +3,7 @@ Useful classes and functions implementation for Chainer, the deep learning frame
 
 # Requirements
 - [Chainer (test only on ver.4.0.0b3)](https://github.com/pfnet/chainer) (Neural network framework)
+- [ChainerCV (test on ver.0.8.0)](https://github.com/chainer/chainercv) (a Library for Deep Learning in Computer Vision)
 
 # Training example
 ```
