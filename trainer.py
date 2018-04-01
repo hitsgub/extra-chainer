@@ -73,10 +73,9 @@ def main(args):
     trainer.extend(extensions.Evaluator(test_iter, model, device=args.gpu),
                    name='val')
     # Set extension: learning rate decay
-    trainer.extend(extensions.ExponentialShift('lr', 0.1),
-                   trigger=(args.epoch // 2, 'epoch'))
-    trainer.extend(extensions.ExponentialShift('lr', 0.1),
-                   trigger=(args.epoch * 3 // 4, 'epoch'))
+    points = [args.epoch // 2, args.epoch * 3 // 4]
+    trigger = training.triggers.ManualScheduleTrigger(points, 'epoch')
+    trainer.extend(extensions.ExponentialShift('lr', 0.1), trigger=trigger)
     # Set extension: Dump graph
     trainer.extend(extensions.dump_graph('main/loss'))
     # Set extension: Snapshot
