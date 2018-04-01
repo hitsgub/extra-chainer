@@ -4,6 +4,12 @@ Useful classes and functions implementation for Chainer, the deep learning frame
 # Requirements
 - [Chainer (test only on ver.4.0.0b3)](https://github.com/pfnet/chainer) (Neural network framework)
 
+# Training example
+```
+python trainer.py --gpu [# of GPU] --model [ex.)models\PreResNet20.py]
+```
+- More information is in .\get_arguments.py
+
 # links
 Implementations of chainer.Link
 - chain_modules
