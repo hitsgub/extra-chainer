@@ -6,9 +6,11 @@ Created on Mon Mar 19 07:57:24 2018
 """
 from chainer import link
 
+
 def numParams(model):
     "Total number of parameters in the model."
     return sum(p.data.size for p in model.params())
+
 
 def numWs(model):
     "Number of ``W`` in the model."
@@ -20,6 +22,7 @@ def numWs(model):
             n += 1
     return n
 
+
 def numLinks(model):
     "Number of ``chainer.link`` in the model."
     n = 0
@@ -30,12 +33,15 @@ def numLinks(model):
             n += 1
     return n
 
+
 def str_info(model):
     "get information of the model."
-    nParams = float(numParams(model))
-    nLayers = numWs(model) # Number which has ``W``, Conv or FC in default chainer.
+    nParams = numParams(model)
+    # Number which has ``W``, Conv or FC in default chainer.
+    nLayers = numWs(model)
     nLinks = numLinks(model)
-    return 'params:{:.3f}M\tlayers:{}\tLinks:{}'.format(nParams*1e-6, nLayers, nLinks)
+    return 'params:{:,}\tlayers:{}\tLinks:{}'.format(nParams, nLayers, nLinks)
+
 
 def print_infos(models):
     "print information of the models."

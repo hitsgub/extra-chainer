@@ -10,6 +10,7 @@ import chainer
 import chainer.links as L
 import chainer.functions as F
 from functions.exadd import exadd_maxshape
+from functools import partial
 
 
 def force_tuple(src, n):
@@ -42,18 +43,18 @@ class LinkDict():
         # Rectified Linear Unit
         # when you add 'func', that is not 'link', to dic,
         # use 'lambda _self: (lambda x: func(x, ...))' form.
-        dic['R'] = lambda _self: (lambda x: F.relu(x))
+        dic['R'] = lambda _self: F.relu
         # Average pooling
-        dic['A'] = lambda _self: (lambda x: F.average_pooling_2d(x, 2))
+        dic['A'] = lambda _self: partial(F.average_pooling_2d, ksize=2)
         # Max pooling
-        dic['M'] = lambda _self: (lambda x: F.max_pooling_2d(x, 2))
+        dic['M'] = lambda _self: partial(F.max_pooling_2d, ksize=2)
         # Global average pooling
         dic['P'] = lambda _self: \
             (lambda x: F.average_pooling_2d(x, x.shape[2:4]))
         # Identity mapping (average pooling when stride > 1)
         dic['I'] = lambda _self: \
             (lambda x: x if _self.stride == 1 else
-             lambda x: F.average_pooling_2d(x, 1, _self.stride))
+             partial(F.average_pooling_2d, ksize=1, stride=_self.stride))
         # Identity mapping (1x1 convolution when stride > 1)
         dic['i'] = lambda _self: \
             (lambda x: x if _self.stride == 1 else
