@@ -1,17 +1,21 @@
 # Extra-Chainer
-Useful classes and functions implementation for Chainer, the deep learning framework.
+Useful classes and functions implementation for Chainer, the deep learning framework.  
+Various novel methods are (and will be) implemented for examples.
+- .\functions\
+  - [ShakeDrop](https://github.com/imenurok/ShakeDrop)
+  - [PGP: Parallel Global Pooling](https://github.com/akitotakeki/pgp-chainer)
 
-# Requirements
+## Requirements
 - [Chainer (test only on ver.4.0.0b3)](https://github.com/pfnet/chainer) (Neural network framework)
 - [ChainerCV (test on ver.0.8.0)](https://github.com/chainer/chainercv) (a Library for Deep Learning in Computer Vision)
 
-# Training example
+## Training example
 ```
 python trainer.py --gpu [# of GPU] --model [ex.)models\PreResNet20.py]
 ```
 - More information is in .\get_arguments.py
 
-# links
+## links
 Implementations of chainer.Link
 - chain_modules
   - CNN module definer by array of keys such as 'I+CBRCB>R',  
@@ -52,13 +56,13 @@ class MyCnnModel(chainer.Chain):
   - Wrapper classes for making chainer 'link' separable.  
     For example, create channel separable convolution from links.Convolution2D.
 
-# functions
+## functions
 Implementations of chainer.Function
 - exadd
   - Extra addition function for Variables they have mismatch shapes.  
     For example, it is able to used for merging branches with different channels in ResNetA.
 
-# models
+## models
 Implementations of neural network models by chainer.Link.
 - network_templates
   - template of neural network models,  
@@ -66,7 +70,7 @@ Implementations of neural network models by chainer.Link.
 
 Various examples are available in the directory.
 
-# utils
+## utils
 Implementations of utility functions.
 - model_info
   - Getter of string of model informations.  
@@ -75,5 +79,5 @@ Implementations of utility functions.
   - get modified shape, remain length of axis in axes, reduce to '1' length of axis not in axes.  
     For example, utils.attention((1, 2), (10, 20, 30, 40)) -> (1, 20, 30, 1).
 
-# Usages
+## Usages
 Please look in each directory.
