@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Apr  3 18:45:32 2018
+Created on Wed Mar 21 21:31:41 2018
 
 @author: HITS
 """
 from models.network_templates import ResNet
 from functions.pgp import PGP
 
-Ns = (3,) * 3
+Ns = (18,) * 3
 channels = (16, 32, 64)
 firsts = 'CBR'
-mains = 'I+BRCBRC'
+mains = 'I+BRcBRCBR4c'
 lasts = 'BRP'
 keys_join = 'G'
 nobias = False
@@ -21,6 +21,6 @@ def G(_self):
 
 
 def model(classes):
-    "Definition of 20-layer pre-activation ResNets with PGP."
+    "Definition of 164-layer bottleneck pre-activation ResNets with PGP."
     return ResNet(classes, Ns, channels, firsts, mains, lasts, keys_join,
                   nobias=nobias, G=G)
