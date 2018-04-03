@@ -6,7 +6,7 @@ Created on Fri Mar 30 10:08:02 2018
 """
 import chainer
 import chainer.datasets as D
-import chainer.links as L
+from links.pgp_classifier import PGP_Classifier
 from chainer import training
 from chainer.training import extensions
 from chainer.backends import cuda
@@ -30,6 +30,22 @@ def get_dataset(dataset):
     return sets
 
 
+def postprocess_loss(fig, axes, obj):
+    "Modify graph of loss."
+    axes.set_xlim(xmin=0)
+    axes.set_yscale('log')
+    axes.grid(which='both')
+    return
+
+
+def postprocess_accuracy(fig, axes, obj):
+    "Modify graph of accuracy."
+    axes.set_xlim(xmin=0)
+    axes.set_ylim(ymax=1)
+    axes.grid(which='both')
+    return
+
+
 def main(args):
     # print learning settings.
     print('GPU: {}'.format(args.gpu))
@@ -40,13 +56,13 @@ def main(args):
     # Load datasets.
     trainset, testset = get_dataset(args.dataset)
     # Data transfomer
-    transformer = Transformer(trainset,
+    transformer = Transformer(trainset, pca=False,
                               normalize=args.normalize, trans=args.augment)
     # Make transform datasets.
     trainset = D.TransformDataset(trainset, transformer.train)
     testset = D.TransformDataset(testset, transformer.test)
     # Set CNN model.
-    model = L.Classifier(get_model(args.model, args.classes))
+    model = PGP_Classifier(get_model(args.model, args.classes))
     # Setup GPU
     if args.gpu >= 0:
         cuda.get_device_from_id(args.gpu).use()
@@ -92,11 +108,13 @@ def main(args):
     trainer.extend(extensions.ProgressBar(update_interval=args.interval))
     # Set extension: Save train curve graph.
     trainer.extend(extensions.PlotReport(
-        ['main/loss', 'val/main/loss'],
-        x_key='epoch', file_name='loss.png', marker=''))
+        ['main/loss', 'val/main/loss'], x_key='epoch',
+        postprocess=postprocess_loss, file_name='loss.png',
+        marker='', grid=False))
     trainer.extend(extensions.PlotReport(
-        ['main/accuracy', 'val/main/accuracy'],
-        x_key='epoch', file_name='accuracy.png', marker=''))
+        ['main/accuracy', 'val/main/accuracy'], x_key='epoch',
+        postprocess=postprocess_accuracy, file_name='accuracy.png',
+        marker='', grid=False))
     # run
     trainer.run()
 
