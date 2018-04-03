@@ -2,6 +2,9 @@
 Implementations of chainer.Function
 
 # Usages
+## pgp
+Re-Implementation of this paper! -> [Parallel Grid Pooling for Data Augmentation](https://github.com/akitotakeki/pgp-chainer)
+
 ## exadd
 Extra addtion function for Variables they have mismatch shapes.
 For example, it is able to used for merging branches with different channels in ResNetA or PyramidNet.  
