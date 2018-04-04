@@ -4,7 +4,8 @@ Various novel methods are (and will be) implemented for examples,
 and various CNN-models are available in .\models\ directory.
 - .\functions\
   - [ShakeDrop](https://github.com/imenurok/ShakeDrop)
-  - [PGP: Parallel Grid Pooling](https://github.com/akitotakeki/pgp-chainer) *Use with .\links\pgp_classifier.py
+  - [PGP: Parallel Grid Pooling](https://github.com/akitotakeki/pgp-chainer)  
+    *Use with .\links\pgp_classifier.py
 
 ## Requirements
 - [Chainer (test only on ver.4.0.0b3)](https://github.com/pfnet/chainer) (Neural network framework)
