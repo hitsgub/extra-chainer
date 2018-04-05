@@ -6,6 +6,7 @@ and various CNN-models are available in .\models\ directory.
   - [ShakeDrop](https://github.com/imenurok/ShakeDrop)
   - [PGP: Parallel Grid Pooling](https://github.com/akitotakeki/pgp-chainer)  
     *Use with .\links\pgp_classifier.py
+  - PGPflip, extention of PGP.
 
 ## Requirements
 - [Chainer (test only on ver.4.0.0b3)](https://github.com/pfnet/chainer) (Neural network framework)
@@ -24,7 +25,7 @@ Implementations of chainer.Link
     where I=identity-mapping, B=BN, R=ReLU, C=Conv3x3, c=Conv1x1, etc...,  
     '+'=additional join, ','=concatenation join, '>'=sequential join,  
     and 'integer' for example 2 or 4, denotes channel scaling factor.
-　- And, you can add keys for your own new methods.
+  - And, you can add keys for your own new methods.
 - network_modules
   - CNN Encoder definer using 'chain_modules.Module'.
 
