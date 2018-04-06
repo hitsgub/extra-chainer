@@ -19,7 +19,7 @@ def zero_padding(x, pad, axis):
 
 def pgp_forward(x, s):
     "parallel grid pooling."
-    for i, p in enumerate(x.shape[2:]):
+    for i, p in enumerate(x.shape[2:], 2):
         if p % s:
             x = zero_padding(x, p % s, i)
     n_in, c, h_in, w_in = x.shape
