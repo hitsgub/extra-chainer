@@ -7,6 +7,7 @@ and various CNN-models are available in .\models\ directory.
   - [PGP: Parallel Grid Pooling](https://github.com/akitotakeki/pgp-chainer)  
     *Use with .\links\pgp_classifier.py
   - PGPflip, extention of PGP.
+  - FlipAugmentation, inspired from PGP.
 
 ## Requirements
 - [Chainer (test only on ver.4.0.0b3)](https://github.com/pfnet/chainer) (Neural network framework)
