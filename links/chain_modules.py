@@ -96,6 +96,8 @@ class LinkDict():
                 # Assigined 'stride' is applied only on the first convolution.
                 self.stride = 1
             yield link
+        if len(self.channels) == 1:
+            self.channels = self.channels[0]
         raise StopIteration()
 
 
@@ -119,46 +121,38 @@ class SeriesLink(chainer.ChainList):
         return six.moves.reduce(lambda h, f: f(h), self.series, x)
 
 
-class SumSeries(chainer.ChainList):
-    "Sum of Series."
-    def __init__(self, in_channels, outs_channels, keys='I+BRCBRC', stride=1,
-                 nobias=False, conv_keys='', depthrate=0, **dic):
-        super(SumSeries, self).__init__()
+class ConnectLink(chainer.ChainList):
+    "Connection of Series."
+    def get_connector(self, key):
+        connectors = {}
+        "Sum of modules"
+        connectors['+'] = (exadd_maxshape, max)
+        "Concatenation of modules on channel-axis"
+        connectors[','] = (F.concat, sum)
+        "Concatenation of modules on sample-axis"
+        connectors['|'] = (partial(F.concat, axis=0), max)
+        return connectors[key]
+
+    def __init__(self, in_channels, out_channels, keys='I?BRCBRC', stride=1,
+                 nobias=False, conv_keys='', depthrate=0, key='?', **dic):
+        super(ConnectLink, self).__init__()
+        self.func, self.get_out_ch = self.get_connector(key)
         if isinstance(keys, str):
-            keys = keys.split('+')
-        outs_channels = force_tuple(outs_channels, len(keys))
+            keys = keys.split(key)
+        outs_channels = force_tuple(out_channels, len(keys))
         for k, o in zip(keys, outs_channels):
-            self.append(SeriesLink(in_channels, o, k, stride, nobias,
-                                   conv_keys, depthrate, **dic))
-        self.out_channels = max(branch.out_channels for branch in self)
-        self.channels = [branch.channels for branch in self]
+            self.append(Module(in_channels, o, k, stride, nobias, conv_keys,
+                               depthrate, print_debug=False, **dic))
+        self.out_channels = self.get_out_ch(m.out_channels for m in self)
+        self.channels = [m.channels for m in self]
 
     def __call__(self, x):
-        return exadd_maxshape([f(x) for f in self])
-
-
-class ConcatSeries(chainer.ChainList):
-    "Concatenation of Series."
-    def __init__(self, in_channels, outs_channels, keys='I,BRCBRC', stride=1,
-                 nobias=False, conv_keys='', depthrate=0, **dic):
-        super(ConcatSeries, self).__init__()
-        if isinstance(keys, str):
-            keys = keys.split(',')
-        outs_channels = force_tuple(outs_channels, len(keys))
-        for k, o in zip(keys, outs_channels):
-            series = SumSeries if '+' in k else SeriesLink
-            self.append(series(in_channels, o, k, stride, nobias, conv_keys,
-                               depthrate, **dic))
-        self.out_channels = sum(branch.out_channels for branch in self)
-        self.channels = [branch.channels for branch in self]
-
-    def __call__(self, x):
-        return F.concat([f(x) for f in self])
+        return self.func([m(x) for m in self])
 
 
 class SequentialChainList(chainer.ChainList):
-
-    """Sequential executer of ChainList.
+    """
+    Sequential executer of ChainList.
 
     Args:
         links: Initial child links.
@@ -174,7 +168,8 @@ class SequentialChainList(chainer.ChainList):
 class Module(SequentialChainList):
     """
     Sequence of Series.
-    Priority of the joiner as shown: '+(sum)' > ',(concat)' > '>(sequence)'.
+    Priority of the joiner as shown:
+        '+(sum)' > ',(channel-concat)' > '|(sample-concat)' > '>(sequence)'.
 
     Args:
         in_channels (int or None): Number of channels of input arrays.
@@ -188,11 +183,12 @@ class Module(SequentialChainList):
             (Note that, it is forbidden both of them are ``None``.)
         keys (str): Array of keys,
             each key corresponds to definition of the layer.
-            '>,+' are Special keys,
+            '>|,+' are Special keys,
             '>' joins both sides of '>' sequencialy,
-            ',' joins both sides by concatenation,
+            '|' joins both sides by concatenation on sample-axis,
+            ',' joins both sides by concatenation on channels-axis,
             '+' joins both sides by summation,
-            and priority order of them is '+' > ',' > '>'.
+            and priority order of them is '+' > ',' > '|' > '>'.
         stride (int or pair of ints): Stride of filter applications.
             ``stride=s`` and ``stride=(s, s)`` are equivalent.
             stride will be applied to the first branch.
@@ -222,18 +218,19 @@ class Module(SequentialChainList):
         if isinstance(keys, str):
             keys = keys.split('>')
         outs_channels = force_tuple(outs_channels, len(keys))
-        for k, o in zip(keys, outs_channels):
-            if ',' in k:
-                series = ConcatSeries
-            elif '+' in k:
-                series = SumSeries
+        for ks, o in zip(keys, outs_channels):
+            for k in '|,+':
+                if k in ks:
+                    series = partial(ConnectLink, key=k)
+                    break
             else:
                 series = SeriesLink
-            self.append(series(in_channels, o, k, stride, nobias, conv_keys,
+            self.append(series(in_channels, o, ks, stride, nobias, conv_keys,
                                depthrate, **dic))
             stride = 1
             in_channels = self[-1].out_channels
         self.out_channels = in_channels
-        self.channels = [branch.channels for branch in self]
+        self.channels = self[0].channels if len(self) == 1 else \
+            [m.channels for m in self]
         if print_debug:
             print('{:.4f}'.format(depthrate), keys, self.channels)
