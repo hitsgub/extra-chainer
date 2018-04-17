@@ -10,7 +10,7 @@ and various CNN-models are available in .\models\ directory.
   - FlipAugmentation, inspired from PGP.
 
 ## Requirements
-- [Chainer (test only on ver.4.0.0b3)](https://github.com/pfnet/chainer) (Neural network framework)
+- [Chainer (test on ver.4.0.0b3 - 5.0.0a1)](https://github.com/pfnet/chainer) (Neural network framework)
 - [ChainerCV (test on ver.0.8.0)](https://github.com/chainer/chainercv) (a Library for Deep Learning in Computer Vision)
 
 ## Training example
