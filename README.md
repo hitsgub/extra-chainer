@@ -24,8 +24,9 @@ Implementations of chainer.Link
 - chain_modules
   - CNN module definer by array of keys such as 'I+CBRCB>R',  
     where I=identity-mapping, B=BN, R=ReLU, C=Conv3x3, c=Conv1x1, etc...,  
-    '+'=additional join, ','=concatenation join, '>'=sequential join,  
-    and 'integer' for example 2 or 4, denotes channel scaling factor.
+    '+'=additional connect, ','=concatenation(axis=1) connect,  
+    '|'=concatenation(axis=0) connect, '>'=sequential connect,  
+    and 'integer' for example 2 or 4, denotes channel scaling factor.
   - And, you can add keys for your own new methods.
 - network_modules
   - CNN Encoder definer using 'chain_modules.Module'.
