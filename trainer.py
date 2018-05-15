@@ -1,20 +1,16 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Mar 30 10:08:02 2018
-
-@author: HITS
-"""
 import chainer
+from chainer.backends import cuda
 import chainer.datasets as D
-from links.pgp_classifier import PGP_Classifier
 from chainer import training
 from chainer.training import extensions
-from chainer.backends import cuda
+
 import numpy as np
-import get_argments
-from utils.model_info import str_info
+
 from datasets.transformer import Transformer
+import get_argments
+from links.pgp_classifier import PGP_Classifier
 from models.get_model import get_model
+from utils.model_info import str_info
 
 
 def get_dataset(dataset):

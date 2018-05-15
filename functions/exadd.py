@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Mar 17 08:07:14 2018
-
-@author: HITS
-"""
 from chainer.backends import cuda
 from chainer import function
 

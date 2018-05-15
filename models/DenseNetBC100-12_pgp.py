@@ -1,11 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 21 22:25:26 2018
-
-@author: HITS
-"""
-from models.network_templates import DenseNet
 from functions.pgp import PGP
+from models.network_templates import DenseNet
 
 Ns = (16,) * 3
 channels = 12

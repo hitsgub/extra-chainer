@@ -1,11 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Mar 19 06:15:49 2018
-
-@author: HITS
-"""
-
 import six
+
 from links.chain_modules import Module, SequentialChainList
 
 

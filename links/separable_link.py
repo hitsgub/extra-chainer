@@ -1,16 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Mar 16 08:00:56 2018
-
-@author: HITS
-"""
-
-import six
 import chainer
-import chainer.links as L
-import chainer.functions as F
 from chainer import config
+import chainer.functions as F
+import chainer.links as L
+
 import numpy as np
+import six
 
 
 class SeparableLink(chainer.ChainList):

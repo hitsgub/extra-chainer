@@ -1,16 +1,12 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Mar 22 20:30:45 2018
-
-@author: HITS
-"""
-from chainer import function
 from chainer import config
-import numpy as np
 from chainer import cuda
+from chainer import function
 import chainer.links as L
-from models.network_templates import ResNet
+
+import numpy as np
+
 from links.separable_link import SeparableLink
+from models.network_templates import ResNet
 from utils.utils import attention_shape
 
 

@@ -1,14 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 21 20:24:29 2018
-
-@author: HITS
-"""
-
 import chainer.links as L
+
 from links.chain_modules import Module, SequentialChainList
-from links.network_modules import Encoder
 from links.network_modules import DynamicChannels, DynamicRatioChannels
+from links.network_modules import Encoder
 
 
 class ResNet(SequentialChainList):

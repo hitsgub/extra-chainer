@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Apr  1 13:15:29 2018
-
-@author: HITS
-"""
 import imp
 from pathlib import Path
 

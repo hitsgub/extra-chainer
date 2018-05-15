@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Apr  6 07:51:09 2018
-
-@author: HITS
-"""
 from chainer.backends import cuda
 from chainer import function
 from functions.pgp import pgp_forward, pgp_backward

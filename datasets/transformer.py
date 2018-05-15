@@ -1,11 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Mar 30 10:17:42 2018
-
-@author: HITS
-"""
-from functools import partialmethod
 from chainercv import transforms
+from functools import partialmethod
 import numpy as np
 
 

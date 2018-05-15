@@ -1,13 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Mar 24 21:23:40 2018
-
-@author: HITS
-"""
-from chainer import function
-from chainer import config
-import numpy as np
 from chainer.backends import cuda
+from chainer import config
+from chainer import function
+import numpy as np
+
 from utils.utils import attention_shape
 
 

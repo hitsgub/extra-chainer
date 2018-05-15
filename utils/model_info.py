@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Mar 19 07:57:24 2018
-
-@author: HITS
-"""
 from chainer import link
 
 

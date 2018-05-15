@@ -1,11 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 21 22:25:26 2018
-
-@author: HITS
-"""
-from models.network_templates import PyramidNet
 from functions.shake_drop import ShakeDrop
+from models.network_templates import PyramidNet
 
 Ns = (30,) * 3
 first_channels = 16

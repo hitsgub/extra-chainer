@@ -1,11 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 21 21:31:41 2018
-
-@author: HITS
-"""
-from models.network_templates import ResNet
 from functions.shake_drop import ShakeDrop
+from models.network_templates import ResNet
 
 Ns = (3,) * 3
 channels = (16, 32, 64)

@@ -1,12 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 21 21:31:41 2018
-
-@author: HITS
-"""
-from models.network_templates import ResNet
 import chainer.links as L
 from functions.flip_augmentation import FlipAugmentation
+from models.network_templates import ResNet
 
 group = 8
 Ns = (3,) * 3

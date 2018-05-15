@@ -1,16 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Mar 16 20:19:18 2018
-
-@author: HITS
-"""
-
-import six
 import chainer
-import chainer.links as L
 import chainer.functions as F
-from functions.exadd import exadd_maxshape
+import chainer.links as L
 from functools import partial
+import six
+
+from functions.exadd import exadd_maxshape
 
 
 def force_tuple(src, n):

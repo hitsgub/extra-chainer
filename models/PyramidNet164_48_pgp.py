@@ -1,11 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 21 22:25:26 2018
-
-@author: HITS
-"""
-from models.network_templates import PyramidNet
 from functions.pgp import PGP
+from models.network_templates import PyramidNet
 
 Ns = (18,) * 3
 first_channels = 16

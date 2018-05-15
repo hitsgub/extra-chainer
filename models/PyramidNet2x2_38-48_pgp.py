@@ -1,12 +1,7 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Apr 17 18:25:58 2018
-
-@author: HITS
-"""
-from models.network_templates import PyramidNet
-from functions.pgp import PGP
 import chainer.links as L
+
+from functions.pgp import PGP
+from models.network_templates import PyramidNet
 
 Ns = (6,) * 3
 first_channels = 16

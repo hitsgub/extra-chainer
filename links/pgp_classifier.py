@@ -1,15 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Apr  3 18:43:10 2018
-
-@author: HITS
-"""
+from chainer.backends import cuda
+import chainer.functions as F
 from chainer.functions.evaluation import accuracy
 from chainer.functions.loss import softmax_cross_entropy
 from chainer import link
 from chainer import reporter
-from chainer.backends import cuda
-import chainer.functions as F
 
 
 class PGP_Classifier(link.Chain):

@@ -1,11 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Apr  3 18:45:32 2018
-
-@author: HITS
-"""
-from models.network_templates import ResNet
 from functions.pgp import PGP
+from models.network_templates import ResNet
 
 Ns = (3,) * 3
 channels = (16, 32, 64)

@@ -1,13 +1,7 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 28 06:58:40 2018
-
-@author: HITS
-"""
 import argparse
+import datetime
 import logging
 from pathlib import Path
-import datetime
 
 
 def tf2bool(tf):
