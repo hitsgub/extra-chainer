@@ -1,7 +1,10 @@
 # functions
 Implementations of chainer.Function
 
-# Usages
+# Usage
+## perturb
+Re-Implementation of this paper. -> [Perturbative Neural Networks](https://arxiv.org/abs/1806.01817)
+
 ## pgp
 Re-Implementation of this paper! -> [Parallel Grid Pooling for Data Augmentation](https://github.com/akitotakeki/pgp-chainer)
 
