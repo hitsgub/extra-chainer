@@ -115,12 +115,19 @@ class SeriesLink(chainer.ChainList):
         return six.moves.reduce(lambda h, f: f(h), self.series, x)
 
 
+def inf_prod(xs):
+    "infinite product."
+    return six.moves.reduce(lambda x, y: x * F.broadcast_to(y, x.shape), xs)
+
+
 class ConnectLink(chainer.ChainList):
     "Connection of Series."
     def get_connector(self, key):
         connectors = {}
         "Sum of modules"
         connectors['+'] = (exadd_maxshape, max)
+        "Product of modules"
+        connectors['*'] = (inf_prod, max)
         "Concatenation of modules on channel-axis"
         connectors[','] = (F.concat, sum)
         "Concatenation of modules on sample-axis"
@@ -163,7 +170,11 @@ class Module(SequentialChainList):
     """
     Sequence of Series.
     Priority of the joiner as shown:
-        '+(sum)' > ',(channel-concat)' > '|(sample-concat)' > '>(sequence)'.
+        '*(prod)' >
+        '+(sum)' >
+        ',(channel-concat)' >
+        '|(sample-concat)' >
+        '>(sequence)'.
 
     Args:
         in_channels (int or None): Number of channels of input arrays.
@@ -177,12 +188,13 @@ class Module(SequentialChainList):
             (Note that, it is forbidden both of them are ``None``.)
         keys (str): Array of keys,
             each key corresponds to definition of the layer.
-            '>|,+' are Special keys,
+            '>|,+*' are Special keys,
             '>' joins both sides of '>' sequencialy,
             '|' joins both sides by concatenation on sample-axis,
             ',' joins both sides by concatenation on channels-axis,
             '+' joins both sides by summation,
-            and priority order of them is '+' > ',' > '|' > '>'.
+            '*' joins both sides by product,
+            and priority order of them is '*' > '+' > ',' > '|' > '>'.
         stride (int or pair of ints): Stride of filter applications.
             ``stride=s`` and ``stride=(s, s)`` are equivalent.
             stride will be applied to the first branch.
@@ -213,7 +225,7 @@ class Module(SequentialChainList):
             keys = keys.split('>')
         outs_channels = force_tuple(outs_channels, len(keys))
         for ks, o in zip(keys, outs_channels):
-            for k in '|,+':
+            for k in '|,+*':
                 if k in ks:
                     series = partial(ConnectLink, key=k)
                     break
