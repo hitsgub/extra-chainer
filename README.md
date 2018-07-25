@@ -9,9 +9,13 @@ and various CNN-models are available in .\models\ directory.
   - [Perturbative Neural Networks](https://arxiv.org/abs/1806.01817)
   - PGPflip, extention of PGP.
   - FlipAugmentation, inspired from PGP.
+  - [SE-Net](https://arxiv.org/abs/1709.01507)  
+    *PreResNet20_SE.py
+  - [competitive SE-Net](https://arxiv.org/abs/1807.08920)  
+    *PreResNet20_CSE.py (modified implementation)
 
 ## Requirements
-- [Chainer (test on ver.4.0.0b3 - 5.0.0a1)](https://github.com/pfnet/chainer) (Neural network framework)
+- [Chainer (test on ver.5.0.0b3)](https://github.com/pfnet/chainer) (Neural network framework)
 - [ChainerCV (test on ver.0.8.0)](https://github.com/chainer/chainercv) (a Library for Deep Learning in Computer Vision)
 
 ## Training example
@@ -25,7 +29,7 @@ Implementations of chainer.Link
 - chain_modules
   - CNN module definer by array of keys such as 'I+CBRCB>R',  
     where I=identity-mapping, B=BN, R=ReLU, C=Conv3x3, c=Conv1x1, etc...,  
-    '+'=additional connect, ','=concatenation(axis=1) connect,  
+    '*'=productional connect, '+'=additional connect, ','=concatenation(axis=1) connect,  
     '|'=concatenation(axis=0) connect, '>'=sequential connect,  
     and 'integer' for example 2 or 4, denotes channel scaling factor.
   - And, you can add keys for your own new methods.
