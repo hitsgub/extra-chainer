@@ -12,7 +12,7 @@ and various CNN-models are available in .\models\ directory.
   - [SE-Net](https://arxiv.org/abs/1709.01507)  
     *PreResNet20_SE.py
   - [competitive SE-Net](https://arxiv.org/abs/1807.08920)  
-    *PreResNet20_CSE.py
+    *PreResNet20_CSE.py (modified implementation)
 
 ## Requirements
 - [Chainer (test on ver.5.0.0b3)](https://github.com/pfnet/chainer) (Neural network framework)
