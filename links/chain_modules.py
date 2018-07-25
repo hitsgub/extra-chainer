@@ -47,11 +47,11 @@ class LinkDict():
             (lambda x: F.average_pooling_2d(x, x.shape[2:4]))
         # Identity mapping (average pooling when stride > 1)
         dic['I'] = lambda _self: \
-            (lambda x: x if _self.stride == 1 else
+            ((lambda x: x) if _self.stride == 1 else
              partial(F.average_pooling_2d, ksize=1, stride=_self.stride))
         # Identity mapping (1x1 convolution when stride > 1)
         dic['i'] = lambda _self: \
-            (lambda x: x if _self.stride == 1 else
+            ((lambda x: x) if _self.stride == 1 else
              L.Convolution2D(None, _self.ch, 1, _self.stride, 0, self.nobias,
                              initialW))
         return dic
