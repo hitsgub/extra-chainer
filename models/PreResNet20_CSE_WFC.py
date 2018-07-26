@@ -33,7 +33,7 @@ class CSE_block(chainer.Chain):
                               nobias, conv_keys, depthrate, **dic)
             self.iSE = Module(in_channels, se_channels, 'PcR', 1,
                               nobias, conv_keys, depthrate, **dic)
-            self.SE = Module(se_channels * 2, out_channels, 'CS', 1,
+            self.SE = Module(se_channels * 2, out_channels, 'cS', 1,
                              nobias, conv_keys, depthrate, S=S, **dic)
         self.out_channels = out_channels
         self.channels = [m.channels for m in
