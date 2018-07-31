@@ -5,7 +5,7 @@ Ns = (3,) * 3
 channels = (16, 32, 64)
 firsts = 'CBR'
 mains = 'Xi'
-lasts = 'BRCP'
+lasts = 'BRcP'
 nobias = False
 
 
