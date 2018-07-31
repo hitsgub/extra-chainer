@@ -13,7 +13,9 @@ and various CNN-models are available in .\models\ directory.
     *PreResNet20_SE.py
   - [competitive SE-Net](https://arxiv.org/abs/1807.08920)  
     *PreResNet20_CSE_WFC.py (double-FC version in original paper.)  
-    *PreResNet20_CSE.py (modified implementation)
+    *PreResNet20_CSE.py (modified implementation)  
+  - [ShuffleNet V2](https://arxiv.org/abs/1807.11164)  
+    *PreResNet20_sv2.py (modified implementation for CIFAR)  
 
 ## Requirements
 - [Chainer (test on ver.5.0.0b3)](https://github.com/pfnet/chainer) (Neural network framework)
