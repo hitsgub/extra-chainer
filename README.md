@@ -5,7 +5,7 @@ and various CNN-models are available in .\models\ directory.
 - .\functions\
   - [ShakeDrop](https://github.com/imenurok/ShakeDrop)
   - [PGP: Parallel Grid Pooling](https://github.com/akitotakeki/pgp-chainer)  
-    *Use with .\links\pgp_classifier.py
+    *Use with .\links\pgp_classifier.py.
   - [Perturbative Neural Networks](https://arxiv.org/abs/1806.01817)
   - PGPflip, extention of PGP.
   - FlipAugmentation, inspired from PGP.
@@ -17,6 +17,11 @@ and various CNN-models are available in .\models\ directory.
   - [ShuffleNet V2](https://arxiv.org/abs/1807.11164)  
     *PreResNet20_sv2.py (modified implementation for CIFAR)  
     *PreResNet20_dwc_sv2.py (with depthwiseconv, modified implementation for CIFAR)  
+- .\iterators\  
+  - [Between Class Learning](https://github.com/mil-tokyo/bc_learning_image)  
+    - BCIterator.py  
+    *Use with .\functions\accuracy_mix.py and .\functions\kl_divergence.py.  
+    The code is refactor from original code for reusability.
 
 ## Requirements
 - [Chainer (test on ver.5.0.0b3)](https://github.com/pfnet/chainer) (Neural network framework)
@@ -24,7 +29,10 @@ and various CNN-models are available in .\models\ directory.
 
 ## Training example
 ```
+# ordinary learning
 python trainer.py --gpu [# of GPU] --model [ex.)models\PreResNet20.py]
+# between class learning
+python trainer_bcl.py --gpu [# of GPU] --model [ex.)models\PreResNet20.py]
 ```
 - More information is in .\get_arguments.py
 
