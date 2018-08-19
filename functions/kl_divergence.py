@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from chainer import config
 import chainer.functions as F
 

@@ -1,19 +1,17 @@
-# -*- coding: utf-8 -*-
 import numpy
 
-from chainer.dataset import iterator
 from chainer.iterators import SerialIterator
 from functools import partial
 from utils import mixers
 
 
-class BCIterator(iterator.Iterator):
+class BCIterator(SerialIterator):
 
-    """Dataset iterator that serially reads the examples.
+    """Dataset iterator that serially reads the examples and mix sub-examples.
 
     This is a simple implementation of :class:`~chainer.dataset.Iterator`
     that just visits each example in either the order of indexes or a shuffled
-    order.
+    order and mix sub-examples.
 
     To avoid unintentional performance degradation, the ``shuffle`` option is
     set to ``True`` by default. For validation, it is better to set it to
@@ -40,62 +38,59 @@ class BCIterator(iterator.Iterator):
             This should return the next order. The size of the order
             should remain constant.
             This option cannot be used when ``shuffle`` is not ``None``.
+        mixer_image (callable): A callable that mix two images.
+            This function should take three arguements: base-image, sub-image
+            and ratio of mixing.
+            This should return the mixed image.
+        mixer_label (callable): A callable that mix two labels.
+            This function should take four arguements: base-label, sub-label,
+            ratio of mixing and number of classes.
+            This should return the mixed label. The format of mixed label will
+            not (int) and should match the format of args of ``lossfun`` and
+            ``accfun`` of Classifier.
+        force_2class (bool): If ``True``, sub-examples are extracted by
+            iterative random-choice until sub-label and base-label
+            are different. If ``False``, sub-examples are extracted from the
+            ``SerialIterator``.
+        _range (float): The max ratio of mixing sub-examples. If ``_range=0``,
+            ``BCIterator`` can be used for non-mix iterator which return same
+            format with mix iterator.
+        classes (int): Number of classes. It is necessary for mixer_label.
 
     """
 
     def __init__(self, dataset, batch_size,
-                 repeat=True, shuffle=None, order_sampler=None, _range=0.5,
+                 repeat=True, shuffle=None, order_sampler=None,
                  mixer_image=mixers.mix_plus, mixer_label=mixers.mix_labels,
-                 classes=1):
-        self.base_iter = SerialIterator(dataset, batch_size, repeat, shuffle,
-                                        order_sampler)
-        self.dataset = dataset
+                 force_2class=False, _range=0.5, classes=1):
+        super(BCIterator, self).__init__(
+            dataset, batch_size, repeat, shuffle, order_sampler)
         self.mixer_image = mixer_image
         self.mixer_label = partial(mixer_label, classes=classes)
         self._range = _range
+        self.force_2class = force_2class
+        if not force_2class:
+            self.sub_iter = SerialIterator(
+                dataset, batch_size, repeat, shuffle, order_sampler)
 
     def get_sub(self, label):
         while True:
-            x, t = self.dataset[numpy.random.randint(len(self.dataset))]
+            x, t = self.dataset[numpy.random.randint(self._epoch_size)]
             if t != label:
                 return x, t
 
-    def mix_sample(self, sample, r):
-        xb, tb = sample
-        xs, ts = self.get_sub(tb)
+    def mix_sample(self, base, sub=None, r=0):
+        xb, tb = base
+        xs, ts = sub or self.get_sub(tb)
         return self.mixer_image(xb, xs, r), self.mixer_label(tb, ts, r)
 
     def __next__(self):
-        base = self.base_iter.__next__()
-        rands = numpy.random.uniform(0, self._range, len(base))
-        batch = [self.mix_sample(sample, r) for sample, r in zip(base, rands)]
-
-        return batch
+        bases = super(BCIterator, self).__next__()
+        rands = numpy.random.uniform(0, self._range, self.batch_size)
+        if self.force_2class:
+            return [self.mix_sample(b, None, r) for b, r in zip(bases, rands)]
+        subs = self.sub_iter.__next__()
+        return [self.mix_sample(b, s, r) for b, s, r
+                in zip(bases, subs, rands)]
 
     next = __next__
-
-    @property
-    def epoch_detail(self):
-        return self.base_iter.epoch_detail
-
-    @property
-    def previous_epoch_detail(self):
-        return self.base_iter.previous_epoch_detail
-
-    def serialize(self, serializer):
-        self.base_iter.serialize(serializer)
-
-    def reset(self):
-        self.base_iter.reset()
-
-    @property
-    def _epoch_size(self):
-        return self.base_iter._epoch_size
-
-    @property
-    def epoch(self):
-        return self.base_iter.epoch
-
-    @property
-    def is_new_epoch(self):
-        return self.base_iter.is_new_epoch
