@@ -6,15 +6,17 @@ from chainer import link
 from chainer import reporter
 
 
-class PGP_Classifier(link.Chain):
+class MultiplexClassifier(link.Chain):
 
-    """A simple classifier model.
+    """A multiplex classifier model.
 
     This is an example of chain that wraps another chain. It computes the
     loss and accuracy based on a given input/label pair.
 
     Args:
         predictor (~chainer.Link): Predictor network.
+            The network returns multiplex prediction.
+            Mutiplex prediction should aline as repetition of batch axis.
         lossfun (function): Loss function.
         accfun (function): Function that computes accuracy.
         label_key (int or str): Key to specify label variable from arguments.
@@ -23,6 +25,8 @@ class PGP_Classifier(link.Chain):
 
     Attributes:
         predictor (~chainer.Link): Predictor network.
+            The network returns multiplex prediction.
+            Mutiplex prediction should aline as repetition of batch axis.
         lossfun (function): Loss function.
         accfun (function): Function that computes accuracy.
         y (~chainer.Variable): Prediction for the last minibatch.
@@ -61,7 +65,7 @@ class PGP_Classifier(link.Chain):
             raise TypeError('label_key must be int or str, but is %s' %
                             type(label_key))
 
-        super(PGP_Classifier, self).__init__()
+        super(MultiplexClassifier, self).__init__()
         self.lossfun = lossfun
         self.accfun = accfun
         self.y = None
@@ -114,17 +118,18 @@ class PGP_Classifier(link.Chain):
         self.loss = None
         self.accuracy = None
         self.y = self.predictor(*args, **kwargs)
-        reps = self.y.shape[0] // t.shape[0]
-        if reps > 1:
+        num = self.y.shape[0] // t.shape[0]
+        if num > 1:
             xp = cuda.get_array_module(t)
+            reps = (num,) + (1,) * (len(t.shape) - 1)
             ts = xp.tile(t, reps)
         else:
             ts = t
         self.loss = self.lossfun(self.y, ts)
         reporter.report({'loss': self.loss}, self)
         if self.compute_accuracy:
-            if reps > 1:
-                ysum = F.reshape(self.y, (reps, t.shape[0], *self.y.shape[1:]))
+            if num > 1:
+                ysum = F.reshape(self.y, (num, t.shape[0], *self.y.shape[1:]))
                 ysum = F.average(ysum, axis=0)
             else:
                 ysum = self.y

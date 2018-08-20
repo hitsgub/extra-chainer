@@ -8,7 +8,7 @@ import numpy as np
 
 from datasets.transformer import Transformer
 import get_argments
-from links.pgp_classifier import PGP_Classifier
+from links.multiplex_classifier import MultiplexClassifier
 from models.get_model import get_model
 from utils.model_info import str_info
 
@@ -58,7 +58,7 @@ def main(args):
     trainset = D.TransformDataset(trainset, transformer.train)
     testset = D.TransformDataset(testset, transformer.test)
     # Set CNN model.
-    model = PGP_Classifier(get_model(args.model, args.classes))
+    model = MultiplexClassifier(get_model(args.model, args.classes))
     # Setup GPU
     if args.gpu >= 0:
         cuda.get_device_from_id(args.gpu).use()
