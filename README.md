@@ -5,7 +5,7 @@ and various CNN-models are available in .\models\ directory.
 - .\functions\
   - [ShakeDrop](https://github.com/imenurok/ShakeDrop)
   - [PGP: Parallel Grid Pooling](https://github.com/akitotakeki/pgp-chainer)  
-    *Use with .\links\pgp_classifier.py.
+    *Use with .\links\multiplex_classifier.py.
   - [Perturbative Neural Networks](https://arxiv.org/abs/1806.01817)
   - PGPflip, extention of PGP.
   - FlipAugmentation, inspired from PGP.
