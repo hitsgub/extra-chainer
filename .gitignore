@@ -108,3 +108,6 @@ venv.bak/
 
 # result
 /results/
+
+# token
+slack_token
