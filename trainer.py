@@ -10,7 +10,9 @@ from datasets.transformer import Transformer
 import get_argments
 from links.multiplex_classifier import MultiplexClassifier
 from models.get_model import get_model
+from training.extensions.print_stack_report import PrintStackReport
 from utils.model_info import str_info
+from utils.slack import SlackOut
 
 
 def get_dataset(dataset):
@@ -97,9 +99,15 @@ def main(args):
     # Set extension: observe_lr
     trainer.extend(extensions.observe_lr())
     # Set extension: Print Report
-    trainer.extend(extensions.PrintReport(
+    trainer.extend(PrintStackReport(
         ['epoch', 'lr', 'main/loss', 'val/main/loss',
          'main/accuracy', 'val/main/accuracy', 'elapsed_time']))
+    if args.slack_interval:
+        # Set extension: Print Report
+        trainer.extend(PrintStackReport(
+            ['epoch', 'lr', 'main/loss', 'val/main/loss',
+             'main/accuracy', 'val/main/accuracy', 'elapsed_time'],
+            out=SlackOut()), trigger=(args.slack_interval, 'epoch'))
     # Set extension: Progress bar
     trainer.extend(extensions.ProgressBar(update_interval=args.interval))
     # Set extension: Save train curve graph.

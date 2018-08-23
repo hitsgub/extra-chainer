@@ -71,6 +71,9 @@ def get_arguments(header=''):
                         "Default is ''.")
     parser.add_argument('--interval', type=int, default=10,
                         help='Update interval of progress bar. Default is 10.')
+    parser.add_argument('--slack_interval', type=int, default=0,
+                        help='Interval of slack log. If 0, not log. '
+                        'Default is 0.')
     args = parser.parse_args()
 
     args.augment = tf2bool(args.augment)
