@@ -1,38 +1,7 @@
 import argparse
-import datetime
-import logging
-from pathlib import Path
-
-
-def tf2bool(tf):
-    "Convert string 't(True)' or 'f(False)' to bool."
-    return tf == 't'
-
-
-def create_log(outdir, logname='log.txt'):
-    "Create log file and set logging target to the file."
-    fname = Path(outdir, logname)
-    logging.basicConfig(
-        format='%(asctime)s [%(levelname)s] %(message)s',
-        filename=fname, level=logging.DEBUG)
-    return
-
-
-def create_result_dir(outdir, modelpath, header=''):
-    "Create result directory using the current time to set the unique name."
-    modelname = Path(modelpath).stem
-    now = datetime.datetime.now()
-    strnow = now.strftime('%y%m%d_%H%M%S_%f')
-    result_dir = Path(outdir, '{}_{}_{}'.format(header, modelname, strnow))
-    if not result_dir.exists():
-        result_dir.mkdir(parents=True)
-    return result_dir
-
-
-def get_classes(dataset):
-    "Get # of classes on the given dataset."
-    dic = {'cifar10': 10, 'cifar100': 100, 'SVHN': 10}
-    return dic[dataset]
+from datasets import dataset
+from utils import io
+from utils import utils
 
 
 def get_arguments(header=''):
@@ -76,12 +45,12 @@ def get_arguments(header=''):
                         'Default is 0.')
     args = parser.parse_args()
 
-    args.augment = tf2bool(args.augment)
-    args.normalize = tf2bool(args.normalize)
+    args.augment = utils.tf2bool(args.augment)
+    args.normalize = utils.tf2bool(args.normalize)
     header = '{}{}'.format(header, args.dataset)
-    args.outdir = create_result_dir(args.outdir, args.model, header)
-    args.classes = get_classes(args.dataset)
+    args.outdir = io.create_result_dir(args.outdir, args.model, header)
+    args.classes = dataset.num_of_class(args.dataset)
 
-    create_log(args.outdir, args.logname)
+    io.create_log(args.outdir, args.logname)
 
     return args
