@@ -36,6 +36,14 @@ python trainer_bcl.py --gpu [# of GPU] --model [ex.)models\PreResNet20.py]
 ```
 - More information is in .\get_arguments.py
 
+## Send message to slack example
+1. Get slack token and save as `slack_token` on root directory.  
+  To get token, please show [here](https://qiita.com/yuishihara/items/2782a76affb5fa574349), thanks to @yuishihara.  
+2. Run below command. The option `slack_interval` means interval of epoch.  
+```
+python trainer.py --gpu [# of GPU] --model [ex.)models\PreResNet20.py] --slack_interval 10
+```
+
 ## links
 Implementations of chainer.Link
 - chain_modules
