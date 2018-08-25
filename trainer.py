@@ -44,42 +44,12 @@ def postprocess_accuracy(fig, axes, obj):
     return
 
 
-def main(args):
-    # print learning settings.
-    print('GPU: {}'.format(args.gpu))
-    print('# Mini-batch size: {}'.format(args.batchsize))
-    print('# epoch: {}'.format(args.epoch))
-    print('Using {} dataset.'.format(args.dataset))
-    print('')
-    # Load datasets.
-    trainset, testset = get_dataset(args.dataset)
-    # Data transfomer
-    transformer = Transformer(trainset, pca=False,
-                              normalize=args.normalize, trans=args.augment)
-    # Make transform datasets.
-    trainset = D.TransformDataset(trainset, transformer.train)
-    testset = D.TransformDataset(testset, transformer.test)
-    # Set CNN model.
-    model = MultiplexClassifier(get_model(args.model, args.classes))
-    # Setup GPU
-    if args.gpu >= 0:
-        cuda.get_device_from_id(args.gpu).use()
-        model.to_gpu()
-        xp = cuda.cupy
-    else:
-        xp = np
-    # Run to get model information.
-    model.predictor(xp.array(trainset[0][:1]))
-    print(str_info(model))
+def setup_trainer(args, train_iter, test_iter, model):
     # Set optimizer
     optimizer = chainer.optimizers.NesterovAG(args.lr)
     optimizer.setup(model)
     if args.weight_decay != 0:
         optimizer.add_hook(chainer.optimizer.WeightDecay(args.weight_decay))
-    # Setup dataset iterators.
-    train_iter = chainer.iterators.SerialIterator(trainset, args.batchsize)
-    test_iter = chainer.iterators.SerialIterator(testset, args.batchsize,
-                                                 False, False)
     # Setup trainer
     updater = training.StandardUpdater(train_iter, optimizer, device=args.gpu)
     trainer = training.Trainer(updater, (args.epoch, 'epoch'), args.outdir)
@@ -119,6 +89,48 @@ def main(args):
         ['main/accuracy', 'val/main/accuracy'], x_key='epoch',
         postprocess=postprocess_accuracy, file_name='accuracy.png',
         marker='', grid=False))
+    return trainer
+
+
+def one_predict(model, iterator, device):
+    xp = cuda.cupy if device >= 0 else np
+    batch = iterator.next()
+    model.predictor(xp.array([x for x, t in batch]))
+    iterator.reset()
+
+
+def main(args):
+    # print learning settings.
+    print('GPU: {}'.format(args.gpu))
+    print('# Mini-batch size: {}'.format(args.batchsize))
+    print('# epoch: {}'.format(args.epoch))
+    print('Using {} dataset.'.format(args.dataset))
+    print('')
+    # Load datasets.
+    trainset, testset = get_dataset(args.dataset)
+    # Data transfomer
+    transformer = Transformer(trainset, pca=False,
+                              normalize=args.normalize, trans=args.augment)
+    # Make transform datasets.
+    trainset = D.TransformDataset(trainset, transformer.train)
+    testset = D.TransformDataset(testset, transformer.test)
+    # Setup dataset iterators.
+    train_iter = chainer.iterators.SerialIterator(trainset, args.batchsize)
+    test_iter = chainer.iterators.SerialIterator(testset, args.batchsize,
+                                                 False, False)
+    # Set CNN model.
+    model = MultiplexClassifier(get_model(args.model, args.classes))
+    # Setup GPU
+    if args.gpu >= 0:
+        cuda.get_device_from_id(args.gpu).use()
+        model.to_gpu()
+    # setup trainer
+    trainer = setup_trainer(args, train_iter, test_iter, model)
+    # Run to get model information.
+    one_predict(model, train_iter, args.gpu)
+    print(str_info(model))
+    if args.resume:
+        chainer.serializers.load_npz(args.resume, trainer)
     # run
     trainer.run()
 
