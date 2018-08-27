@@ -15,7 +15,7 @@ class Perturb(function.Function):
         xp = cuda.get_array_module(x)
         _, c, h, w = x.shape
         return xp.random.uniform(
-                -self.level, self.level, (1, c, h, w)).astype(xp.float32)
+            -self.level, self.level, (1, c, h, w)).astype(xp.float32)
 
     def forward(self, xs):
         x = xs[0]

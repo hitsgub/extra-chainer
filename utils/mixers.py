@@ -12,10 +12,10 @@ def mix_mean(a, b, ratio=0.):
 
 
 def mix_plus(a, b, ratio=0.):
-    ga = numpy.std(a)
-    gb = numpy.std(b)
     if ratio == 0:
         return a
+    ga = numpy.std(a)
+    gb = numpy.std(b)
     p = 1.0 / (1 + gb / ga * (1 - ratio) / ratio)
     denomi = numpy.sqrt(p ** 2 + (1 - p) ** 2)
     y = ((a * (1 - p) + b * p) / denomi).astype(numpy.float32)

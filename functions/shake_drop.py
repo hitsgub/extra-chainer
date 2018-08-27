@@ -19,28 +19,21 @@ class ShakeDrop(function.Function):
 
     def forward(self, xs):
         x = xs[0]
-        xp = cuda.get_array_module(x)
         self.retain_inputs(())
-        if config.train:
-            self.gate = np.random.binomial(1, self.pl)
-            if not self.gate:
-                self.shape = attention_shape(self.axes, x.shape)
-                alpha = xp.random.uniform(
-                    *self.a_range, self.shape).astype(np.float32)
-                y = x * alpha
-            else:
-                y = x
-        else:
-            y = x * self.E
-        return y,
+        if not config.train:
+            return x * self.E,
+        self.gate = np.random.binomial(1, self.pl)
+        if self.gate:
+            return x,
+        self.shape = attention_shape(self.axes, x.shape)
+        xp = cuda.get_array_module(x)
+        alpha = xp.random.uniform(*self.a_range, self.shape).astype(np.float32)
+        return x * alpha,
 
     def backward(self, xs, gys):
         gy = gys[0]
         xp = cuda.get_array_module(gy)
-        if not self.gate:
-            beta = xp.random.uniform(
-                *self.b_range, self.shape).astype(np.float32)
-            gx = gy * beta
-        else:
-            gx = gy
-        return gx,
+        if self.gate:
+            return gy,
+        beta = xp.random.uniform(*self.b_range, self.shape).astype(np.float32)
+        return gy * beta,
