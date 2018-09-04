@@ -51,3 +51,6 @@ class MyCnnModel(chainer.Chain):
         ...
         return x
 ```
+
+## shuffle
+Shuffle array implementation for [shuffleNet](https://arxiv.org/abs/1707.01083) and/or [shuffleNet V2](https://arxiv.org/abs/1807.11164) as chainer function.  
