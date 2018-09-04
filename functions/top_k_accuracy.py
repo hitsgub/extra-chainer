@@ -3,11 +3,12 @@ import six
 from chainer.backends import cuda
 from chainer import function
 from chainer.utils import type_check
+from functools import partial
 
 
 class TopKAccuracy(function.Function):
 
-    def __init__(self, top_k=1, ignore_label=None):
+    def __init__(self, top_k=5, ignore_label=None):
         self.top_k = top_k
         self.ignore_label = ignore_label
 
@@ -51,7 +52,7 @@ class TopKAccuracy(function.Function):
             return xp.asarray(float(correct_cnt) / total, dtype=y.dtype),
 
 
-def top_k_accuracy(y, t, top_k=1, ignore_label=None):
+def top_k_accuracy(y, t, top_k=5, ignore_label=None):
     """Computes multiclass classification top-K accuracy of the minibatch.
 
     Args:
@@ -100,3 +101,7 @@ def top_k_accuracy(y, t, top_k=1, ignore_label=None):
         array(0.5)
     """
     return TopKAccuracy(top_k=top_k, ignore_label=ignore_label)(y, t)
+
+
+def get_top_k_accuracy_func(top_k=5):
+    return partial(top_k_accuracy, top_k=top_k)
