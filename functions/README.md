@@ -2,6 +2,13 @@
 Implementations of chainer.Function
 
 # Usage
+## top_k_accuracy
+top-k accuracy implementation for [ImageNet](http://www.image-net.org/challenges/LSVRC/) as chainer function.  
+Use `Classifier(..., accfun=top_k_accuracy)` or `Clasifier(..., accfun=get_top_k_accuracy_func(top_k=3)`.  
+
+## shuffle
+Shuffle array implementation for [shuffleNet](https://arxiv.org/abs/1707.01083) and/or [shuffleNet V2](https://arxiv.org/abs/1807.11164) as chainer function.  
+
 ## perturb
 Re-Implementation of this paper. -> [Perturbative Neural Networks](https://arxiv.org/abs/1806.01817)
 
@@ -51,6 +58,3 @@ class MyCnnModel(chainer.Chain):
         ...
         return x
 ```
-
-## shuffle
-Shuffle array implementation for [shuffleNet](https://arxiv.org/abs/1707.01083) and/or [shuffleNet V2](https://arxiv.org/abs/1807.11164) as chainer function.  
