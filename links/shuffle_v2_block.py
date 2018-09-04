@@ -1,33 +1,8 @@
 import chainer
-from chainer import function
 import chainer.functions as F
 
+from functions.shuffle import shuffle
 from links.chain_modules import Module
-
-
-def shuffler(x, stride=2, inv=False):
-    n, c, h, w = x.shape
-    c0, c1 = stride, c // stride
-    if inv:
-        c0, c1 = c1, c0
-    y = x.reshape(n, c0, c1, h, w)
-    y = y.transpose(0, 2, 1, 3, 4)
-    return y.reshape(*x.shape)
-
-
-class shuffle_channel(function.Function):
-    "shuffle function."
-    def __init__(self, stride=2):
-        self.stride = stride
-
-    def forward(self, xs):
-        self.retain_inputs(())
-        x, = xs
-        return shuffler(x, self.stride),
-
-    def backward(self, xs, gys):
-        gy, = gys
-        return shuffler(gy, self.stride, True),
 
 
 class Shuffle_v2_block(chainer.Chain):
@@ -48,7 +23,8 @@ class Shuffle_v2_block(chainer.Chain):
                                 conv_keys, depth_ratio, **dic)
 
     def __call__(self, x):
-        x, i = [x, x] if self.copy else F.split_axis(x, (self.conv_in,), axis=1)
+        x, i = [x, x] if self.copy else \
+            F.split_axis(x, (self.conv_in,), axis=1)
         x = self.convs(x)
         y = F.concat((x, i), axis=1)
-        return shuffle_channel()(y)
+        return shuffle(y)
