@@ -47,11 +47,11 @@ class LinkDict():
             (lambda x: F.average_pooling_2d(x, x.shape[2:4]))
         # Identity mapping (average pooling when stride > 1)
         dic['I'] = lambda _self: \
-            ((lambda x: x) if _self.stride == 1 else
+            (None if _self.stride == 1 else
              partial(F.average_pooling_2d, ksize=1, stride=_self.stride))
         # Identity mapping (1x1 convolution when stride > 1)
         dic['i'] = lambda _self: \
-            ((lambda x: x) if _self.stride == 1 else
+            (None if _self.stride == 1 else
              L.Convolution2D(None, _self.ch, 1, _self.stride, 0, self.nobias,
                              initialW))
         return dic
@@ -73,7 +73,7 @@ class LinkDict():
 
     def __iter__(self):
         factor = 1
-        self.channels = []
+        self.channels = [self.ch]
         for k in self.keys:
             if k.isdigit():
                 factor = int(k)
@@ -86,10 +86,13 @@ class LinkDict():
                 factor = 1
             # create the 'link' instance (or 'lambda x' function).
             link = self.dic[k](self)
+            if self.channels[-1] != self.ch:
+                self.channels.append(self.ch)
             if k in self.conv_keys:
                 # Assigined 'stride' is applied only on the first convolution.
                 self.stride = 1
-            yield link
+            if link is not None:
+                yield link
         if len(self.channels) == 1:
             self.channels = self.channels[0]
         raise StopIteration()
@@ -126,7 +129,7 @@ class ConnectLink(chainer.ChainList):
         connectors = {}
         "Sum of modules"
         connectors['+'] = (exadd_maxshape, max)
-        "Product of modules"
+        "Product of Modules"
         connectors['*'] = (inf_prod, max)
         "Concatenation of modules on channel-axis"
         connectors[','] = (F.concat, sum)
@@ -144,7 +147,7 @@ class ConnectLink(chainer.ChainList):
         for k, o in zip(keys, outs_channels):
             self.append(Module(in_channels, o, k, stride, nobias, conv_keys,
                                depthrate, print_debug=False, **dic))
-        self.out_channels = self.get_out_ch(m.out_channels for m in self)
+        self.out_channels = self.get_out_ch(m.out_channels or 0 for m in self)
         self.channels = [m.channels for m in self]
 
     def __call__(self, x):
