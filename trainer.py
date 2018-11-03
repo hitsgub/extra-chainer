@@ -2,6 +2,8 @@ import chainer
 from chainer.backends import cuda
 import chainer.datasets as D
 
+import chainer_computational_cost as c3
+
 import numpy as np
 
 from datasets.dataset import get_dataset
@@ -16,7 +18,10 @@ from utils.setup_trainer import setup_trainer
 def one_predict(model, iterator, device):
     xp = cuda.cupy if device >= 0 else np
     batch = iterator.next()
-    model.predictor(xp.array([x for x, t in batch]))
+    with chainer.no_backprop_mode(), chainer.using_config('train', False):
+        with c3.ComputationalCostHook(fma_1flop=True) as cch:
+            model.predictor(xp.array([x for x, t in batch]))
+            cch.show_summary_report(unit='auto', n_digits=3, mode='table')
     iterator.reset()
 
 
