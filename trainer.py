@@ -21,7 +21,7 @@ def one_predict(model, iterator, device):
     with chainer.no_backprop_mode(), chainer.using_config('train', False):
         with c3.ComputationalCostHook(fma_1flop=True) as cch:
             model.predictor(xp.array([x for x, t in batch]))
-            cch.show_summary_report(unit='auto', n_digits=3, mode='table')
+            cch.show_summary_report(n_digits=3, mode='table')
     iterator.reset()
 
 
