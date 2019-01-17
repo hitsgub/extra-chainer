@@ -29,8 +29,9 @@ and various CNN-models are available in .\models\ directory.
     The code is refactor from original code for reusability.
 
 ## Requirements
-- [Chainer (test on ver.5.0.0b3)](https://github.com/pfnet/chainer) (Neural network framework)
+- [Chainer (test on ver.6.0.0)](https://github.com/pfnet/chainer) (Neural network framework)
 - [ChainerCV (test on ver.0.8.0)](https://github.com/chainer/chainercv) (a Library for Deep Learning in Computer Vision)
+- [chainer-computational-cost](https://github.com/belltailjp/chainer_computational_cost) (a tool to estimate theoretical computational cost in chainer)
 
 ## Training example
 ```
