@@ -2,25 +2,30 @@
 Useful classes and functions implementation for Chainer, the deep learning framework.  
 Various novel methods are (and will be) implemented for examples,  
 and various CNN-models are available in .\models\ directory.
-- .\functions\
+- .\models\
   - [ShakeDrop](https://github.com/imenurok/ShakeDrop)
   - [PGP: Parallel Grid Pooling](https://github.com/akitotakeki/pgp-chainer)  
-    *Use with .\links\multiplex_classifier.py.
+    * Use with .\links\multiplex_classifier.py.
   - [Perturbative Neural Networks](https://arxiv.org/abs/1806.01817)
   - PGPflip, extention of PGP.
   - FlipAugmentation, inspired from PGP.
   - [SE-Net](https://arxiv.org/abs/1709.01507)  
-    *PreResNet20_SE.py
+    * PreResNet20_SE.py
   - [competitive SE-Net](https://arxiv.org/abs/1807.08920)  
-    *PreResNet20_CSE_WFC.py (double-FC version in original paper.)  
-    *PreResNet20_CSE.py (modified implementation)  
+    * PreResNet20_CSE_WFC.py (double-FC version in original paper.)  
+    * PreResNet20_CSE.py (modified implementation)  
   - [ShuffleNet V2](https://arxiv.org/abs/1807.11164)  
-    *PreResNet20_sv2.py (modified implementation for CIFAR)  
-    *PreResNet20_dwc_sv2.py (with depthwiseconv, modified implementation for CIFAR)  
+    * PreResNet20_sv2.py (modified implementation for CIFAR)  
+    * PreResNet20_dwc_sv2.py (with depthwiseconv, modified implementation for CIFAR)  
+  - [MixFeat](https://openreview.net/forum?id=HygT9oRqFX)  
+    * PreResNet20_mixfeat.py
+  - [FishNet](https://arxiv.org/abs/1901.03495)  
+    * Fish* Net*.py (modified implementation for CIFAR)  
+    * Fish* Mix*.py (modified implementation for CIFAR, with MixFeat)  
 - .\iterators\  
   - [Between Class Learning](https://github.com/mil-tokyo/bc_learning_image)  
     - BCIterator.py  
-    *Use with .\functions\accuracy_mix.py and .\functions\kl_divergence.py.  
+      * Use with .\functions\accuracy_mix.py and .\functions\kl_divergence.py.  
     The code is refactor from original code for reusability.
 
 ## Requirements
