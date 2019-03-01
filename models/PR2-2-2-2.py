@@ -10,6 +10,6 @@ strides = [1] * 4
 
 
 def model(classes):
-    "Definition of pre-activation ResNets with MixFeat."
+    "Definition of pre-activation ResNets."
     return ResNet(classes, Ns, channels, firsts, mains, lasts,
                   strides=strides, nobias=nobias)
