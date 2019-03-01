@@ -22,7 +22,13 @@ def postprocess_accuracy(fig, axes, obj):
 
 def setup_trainer(args, train_iter, test_iter, model):
     # Set optimizer
-    optimizer = chainer.optimizers.NesterovAG(args.lr)
+    if args.opt == 'NesterovAG':
+        optimizer = chainer.optimizers.NesterovAG(args.lr)
+        lr = 'lr'
+    elif args.opt == 'Adam':
+        optimizer = chainer.optimizers.Adam(
+            alpha=args.lr, amsgrad=args.amsgrad, adabound=args.adabound)
+        lr = 'alpha'
     optimizer.setup(model)
     if args.weight_decay != 0:
         optimizer.add_hook(chainer.optimizer.WeightDecay(args.weight_decay))
@@ -35,7 +41,7 @@ def setup_trainer(args, train_iter, test_iter, model):
     # Set extension: learning rate decay
     points = [args.epoch // 2, args.epoch * 3 // 4]
     trigger = training.triggers.ManualScheduleTrigger(points, 'epoch')
-    trainer.extend(extensions.ExponentialShift('lr', 0.1), trigger=trigger)
+    trainer.extend(extensions.ExponentialShift(lr, 0.1), trigger=trigger)
     # Set extension: Dump graph
     trainer.extend(extensions.dump_graph('main/loss'))
     # Set extension: Snapshot

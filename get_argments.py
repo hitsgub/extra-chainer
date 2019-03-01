@@ -20,6 +20,13 @@ def get_arguments(header=''):
     parser.add_argument('--epoch', type=int, default=300,
                         help='Number of sweeps over the dataset to train.'
                         'Default is 300.')
+    parser.add_argument('--opt', type=str, default='NesterovAG',
+                        choices=['NesterovAG', 'Adam'],
+                        help="Optimizer. Default is 'NesterovAG'.")
+    parser.add_argument('--amsgrad', action='store_true', default=False,
+                        help='Use AMSGrad optimizer in Adam. default is False.')
+    parser.add_argument('--adabound', action='store_true', default=False,
+                        help='Use AdaBound optimizer in Adam. default is False.')
     parser.add_argument('--lr', type=float, default=0.05,
                         help='Initial learning rate. Default is 0.05.')
     parser.add_argument('--weight_decay', type=float, default=5e-4,
